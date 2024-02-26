@@ -11,8 +11,8 @@
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author  Juan J. Ruiz
+ * @version 2/26/24
  */
 
 public class Game 
@@ -34,28 +34,73 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room outside, theater, pub, lab, office, cafeteria, library,
+        planetarium, gym, gallery, store, lounge, support, health, 
+        classroom;
       
         // create the rooms
         outside = new Room("outside the main entrance of the university");
         theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
+        pub = new Room("in the art gallery");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
+        cafeteria = new Room("in the cafeteria");
+        library = new Room("in the library");
+        planetarium = new Room("in planetarium");
+        gym = new Room("in the gym");
+        gallery  = new Room("in the art gallery");
+        store = new Room("in the store");
+        lounge = new Room("in the student lounge");
+        support = new Room("in the student support office");
+        health = new Room("in the health office");
+        classroom = new Room("in a classroom");
         
         // initialise room exits
+        outside.setExit("north", lounge);
         outside.setExit("east", theater);
         outside.setExit("south", lab);
         outside.setExit("west", pub);
+        
+        lounge.setExit("south", outside);
 
         theater.setExit("west", outside);
-
-        pub.setExit("east", outside);
-
+        
         lab.setExit("north", outside);
         lab.setExit("east", office);
-
+        lab.setExit("west", classroom);
+        lab.setExit("south", health);
+        
         office.setExit("west", lab);
+        
+        classroom.setExit("north", lab);
+        classroom.setExit("east", gym);
+        classroom.setExit("south", support);
+        
+        gym.setExit("west", classroom);
+        
+        support.setExit("north", classroom);
+        
+        health.setExit("north", lab);
+         
+        pub.setExit("north", cafeteria);
+        pub.setExit("east", outside);
+        pub.setExit("south", planetarium);
+        pub.setExit("west", lounge);
+        
+        cafeteria.setExit("south",pub);
+        
+        planetarium.setExit("north",pub);
+        
+        lounge.setExit("north",library);
+        lounge.setExit("east",pub);
+        lounge.setExit("south",gallery);
+        lounge.setExit("west",store);
+        
+        library.setExit("south",lounge);
+        
+        gallery.setExit("north",lounge);
+        
+        store.setExit("east",lounge);
 
         currentRoom = outside;  // start game outside
     }
@@ -86,6 +131,8 @@ public class Game
         System.out.println();
         System.out.println("Welcome to the World of Zuul!");
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("You are lost. You are alone. You are wandering");
+        System.out.println("around at the university.");
         System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
@@ -114,6 +161,14 @@ public class Game
             case GO:
                 goRoom(command);
                 break;
+                
+            case LOOK:
+                lookAt();
+                break;
+                
+            case EAT:
+                eatHere();
+                break;
 
             case QUIT:
                 wantToQuit = quit(command);
@@ -131,11 +186,14 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("It seems that you need help.");
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
+        System.out.println();
+        
+        System.out.println("Aside from eat, choose one of these alongside");
+        System.out.println("the direction in order to progress.");
     }
 
     /** 
@@ -164,6 +222,18 @@ public class Game
         }
     }
 
+    private void lookAt()
+    {
+        System.out.println(currentRoom.getLongDescription());
+    }
+    
+    private void eatHere()
+    {
+        System.out.println
+        ("You have eaten a snack and you are not hungry any more.");
+        System.out.println(currentRoom.getLongDescription());
+    }
+    
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
